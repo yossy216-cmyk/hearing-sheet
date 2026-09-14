@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本政策金融公庫 お借入のご相談 — 聞き取りシート</title>
+<style>
+  :root{
+    --bg:#f7f5f0; --card:#fff; --ink:#1f2328; --sub:#5b6570;
+    --line:#dfd9cd; --accent:#1d4e6f; --soft:#e8f0f5;
+    --warn:#8a5a00; --ok:#2f6b3f; --given:#fbf8ef;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+    font-size:18px;line-height:1.8;-webkit-text-size-adjust:100%}
+  .wrap{max-width:780px;margin:0 auto;padding:20px 16px 90px}
+  h1{font-size:21px;margin:0 0 6px;letter-spacing:.02em}
+  .lead{color:var(--sub);font-size:15px;margin:0 0 18px}
+  .bar{height:8px;background:#e6e1d6;border-radius:99px;overflow:hidden;margin:14px 0 6px}
+  .bar>i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  .count{font-size:14px;color:var(--sub);text-align:right;margin-bottom:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .sec{font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.04em;margin:0 0 4px}
+  .src{font-size:13px;color:var(--sub);margin:0 0 12px}
+  .q{font-size:22px;font-weight:700;line-height:1.55;margin:0 0 10px}
+  .why{font-size:15px;color:var(--sub);background:var(--soft);border-radius:10px;padding:10px 13px;margin:0 0 16px}
+  .given{font-size:16px;background:var(--given);border:1px dashed var(--line);
+    border-radius:10px;padding:12px 14px;margin:0 0 16px;white-space:pre-wrap}
+  .givenlab{font-size:13px;color:var(--sub);margin:0 0 4px}
+  label.opt{display:block;border:2px solid var(--line);border-radius:12px;
+    padding:13px 16px;margin:0 0 10px;cursor:pointer;background:#fff}
+  label.opt:hover{border-color:var(--accent)}
+  label.opt input{margin-right:10px;transform:scale(1.3)}
+  label.opt.sel{border-color:var(--accent);background:var(--soft)}
+  input[type=text],textarea{width:100%;font-family:inherit;font-size:19px;padding:13px 14px;
+    border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+  textarea{min-height:108px;line-height:1.7;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .sublab{font-size:14px;color:var(--sub);margin:14px 0 6px}
+  .nav{display:flex;gap:12px;margin-top:22px}
+  button{font-family:inherit;font-size:18px;font-weight:700;padding:14px 20px;
+    border-radius:12px;border:2px solid var(--accent);cursor:pointer}
+  .primary{background:var(--accent);color:#fff;flex:1}
+  .ghost{background:#fff;color:var(--accent)}
+  .skip{background:none;border:none;color:var(--sub);font-size:16px;font-weight:400;
+    text-decoration:underline;padding:12px 0;cursor:pointer}
+  .note{font-size:14px;color:var(--sub);margin-top:24px;border-top:1px solid var(--line);padding-top:14px}
+  /* 章メニュー */
+  .chap{display:flex;align-items:center;gap:12px;border:2px solid var(--line);
+    border-radius:12px;padding:14px 16px;margin:0 0 10px;background:#fff;
+    cursor:pointer;width:100%;text-align:left;font-weight:400;font-size:17px}
+  .chap:hover{border-color:var(--accent)}
+  .chap b{display:block;font-size:18px}
+  .chap small{color:var(--sub);font-size:14px}
+  .pill{margin-left:auto;font-size:14px;font-weight:700;color:#fff;background:var(--sub);
+    border-radius:99px;padding:3px 12px;white-space:nowrap}
+  .pill.full{background:var(--ok)}
+  .pill.none{background:#b0a99a}
+  table{width:100%;border-collapse:collapse;font-size:16px;margin:6px 0 0}
+  th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+  th{width:44%;color:var(--sub);font-weight:600}
+  td.empty{color:var(--warn)}
+  h2.res{font-size:17px;color:var(--accent);margin:22px 0 0;border-bottom:2px solid var(--accent);padding-bottom:4px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .actions button,.actions a{flex:1 1 200px;text-align:center;text-decoration:none;display:block}
+  .actions a{background:#fff;color:var(--accent);border:2px solid var(--accent);
+    border-radius:12px;font-size:18px;font-weight:700;padding:14px 20px}
+  #copied{color:var(--ok);font-weight:700;font-size:16px;margin-top:10px;display:none}
+  @media (max-width:480px){
+    body{font-size:17px}.q{font-size:20px}
+    th{width:100%;display:block;border:none;padding-bottom:0}
+    td{display:block;padding-top:2px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 表紙・章メニュー ============ -->
+<div id="menu">
+  <h1>日本政策金融公庫 お借入のご相談<br>事前の聞き取りシート</h1>
+  <p class="lead">
+    公庫に出す「創業計画書」と「借入申込書」に書く項目を、そのまま質問の形にしたものです。
+    全62問を7つの章に分けてあります。<span style="color:var(--accent);font-weight:700">一度に全部やらなくて結構です。</span>
+    章ごとに、お手すきのときに少しずつ進めてください。<br><br>
+    わからない項目は「わからない／あとで調べる」で飛ばせます。<br><br>
+    <b>入力した内容は、この端末の中だけに残ります。どこにも送信されません。</b>
+  </p>
+  <div id="chaps"></div>
+  <div class="actions">
+    <button class="primary" id="toresult" type="button">回答をまとめて見る</button>
+  </div>
+  <p class="note">途中で閉じても、同じ端末の同じブラウザで開き直せば続きから再開できます。
+    <button class="skip" id="reset" type="button">最初からやり直す</button></p>
+</div>
+
+<!-- ============ 設問 ============ -->
+<div id="quiz" style="display:none">
+  <div class="bar"><i id="bar"></i></div>
+  <div class="count" id="count"></div>
+  <div class="card">
+    <p class="sec" id="sec"></p>
+    <p class="src" id="src"></p>
+    <p class="q" id="q"></p>
+    <div class="why" id="why"></div>
+    <div id="field"></div>
+    <div class="nav">
+      <button class="ghost" id="prev" type="button">戻る</button>
+      <button class="primary" id="next" type="button">次へ</button>
+    </div>
+    <div style="text-align:center">
+      <button class="skip" id="skip" type="button">わからない／あとで調べる</button>
+    </div>
+  </div>
+  <p class="note"><button class="skip" id="tomenu" type="button">章の一覧に戻る</button></p>
+</div>
+
+<!-- ============ 結果 ============ -->
+<div id="done" style="display:none">
+  <div class="card">
+    <p class="sec">回答のまとめ</p>
+    <p class="q" style="font-size:20px">ありがとうございました。</p>
+    <div class="why">下の「回答をコピー」を押して、メールやLINEに貼り付けて送ってください。<br>
+      オレンジの行は未回答です。あとで調べて追記してください。</div>
+    <div id="tbls"></div>
+    <div class="actions">
+      <button class="primary" id="copy" type="button">回答をコピー</button>
+      <a id="mail" href="#">メールで送る</a>
+      <button class="ghost" id="back" type="button">章の一覧に戻る</button>
+    </div>
+    <p id="copied">コピーしました。メールやLINEに貼り付けてください。</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+"use strict";
+var KEY = "yamamiya_kouko_hearing_v2";
+
+/* type: choice / text / textarea */
+var CH = [
+  { id:"c1", name:"1. 借入の希望", desc:"金額・時期・返し方", src:"借入申込書／創業計画書8" },
+  { id:"c2", name:"2. 会社と経営者", desc:"経歴・資格・他社との関わり", src:"創業計画書1・2・6" },
+  { id:"c3", name:"3. 仕事の中身", desc:"何をいくらで、誰に", src:"創業計画書3" },
+  { id:"c4", name:"4. 人と取引先", desc:"従業員・入金と支払の条件", src:"創業計画書4・5" },
+  { id:"c5", name:"5. お金のこと", desc:"自己資金・いまある借入", src:"創業計画書7・8" },
+  { id:"c6", name:"6. これからの見通し", desc:"売上と経費の見込み", src:"創業計画書9／月別収支計画書" },
+  { id:"c7", name:"7. 書類と面談", desc:"そろえるもの・日程", src:"申込に必要な書類" }
+];
+
+var Q = [
+/* ===== 1. 借入の希望 ===== */
+{c:"c1",k:"amount",t:"choice",q:"いくら借りたいとお考えですか。",
+ why:"ご希望の額を一つに決めたうえで申し込みたいので、最初にお聞きします。",
+ o:["500万円","700万円","1,000万円","1,000万円を超える額","金額はまだ決めていない"]},
+{c:"c1",k:"amount_free",t:"text",q:"「超える額」「決めていない」を選んだ方は、いくらぐらいかお書きください。",
+ why:"だいたいで結構です。幅（〇〇万円〜〇〇万円）でもかまいません。",ph:"例：1,200万円ぐらい"},
+{c:"c1",k:"when",t:"choice",q:"お金はいつまでに必要ですか。",
+ why:"チラシの印刷とポスティングの発注時期から逆算します。",
+ o:["1か月以内","2〜3か月以内","半年以内","急がない"]},
+{c:"c1",k:"term",t:"choice",q:"返済の期間はどのくらいをお考えですか。",
+ why:"運転資金は最長10年まで選べます。長いほど毎月は軽く、利息の総額は増えます。",
+ o:["5年","7年","10年","おまかせ"]},
+{c:"c1",k:"suechi",t:"choice",q:"元金の返済を待ってもらう期間（据置）は、どのくらい希望されますか。",
+ why:"最長5年まで置けます。その間は利息だけの支払いです。チラシの反響が出るまでの時間を稼げます。",
+ o:["6か月","1年","2年","置かなくてよい","おまかせ"]},
+{c:"c1",k:"shito",t:"textarea",q:"お金の使いみちを、おおまかな内訳で教えてください。",
+ why:"公庫の様式では、設備資金と運転資金を分けて書きます。金額の根拠として見積書を添えます。",
+ ph:"例：広告宣伝費に〇〇万円、運転資金に〇〇万円、人件費に〇〇万円"},
+{c:"c1",k:"setsubi",t:"textarea",q:"この1年で買う予定の設備はありますか。（車・パソコン・測量機器・ソフトなど）",
+ why:"設備資金は返済期間を20年まで延ばせるので、分けて申し込んだほうが有利な場合があります。",
+ ph:"例：業務用のパソコン1台とCADソフト／特になし"},
+
+/* ===== 2. 会社と経営者 ===== */
+{c:"c2",k:"kessan",t:"choice",q:"決算月（事業年度の終わり）は何月ですか。",
+ why:"ここが一番大事です。税務申告を2期終える前だと、無担保・無保証人で、利率も0.65％下がります。この窓がいつ閉じるかを知りたいのです。",
+ o:["1月","2月","3月","6月","9月","12月","その他・覚えていない"]},
+{c:"c2",k:"doki",t:"textarea",q:"創業の動機を、社長のお言葉で教えてください。",
+ why:"公庫の様式の1番目が「創業の動機」です。ここは社長ご自身の言葉があるほど強くなります。",
+ ph:"例：長年この仕事をしてきて、地域に安心して相談できる相手が少ないと感じたため"},
+{c:"c2",k:"ryakureki",t:"textarea",q:"これまでのご経歴を教えてください。",
+ why:"公庫は「勤務先名だけでなく、担当業務・役職・身につけた技能」まで書くよう求めています。会社の実績が無いぶん、ここが審査の中心になります。",
+ ph:"例：実務〇〇年。勤務先と担当業務、役職、これまでに手がけた件数など"},
+{c:"c2",k:"kojin",t:"choice",q:"個人でやっておられた設計事務所は、いまどうなっていますか。",
+ why:"公庫の様式に「以前の事業を続けているか、やめたか（やめた時期）」を書く欄があります。続いている場合はその決算も見られます。",
+ o:["廃業した（時期を次でお聞きします）","まだ続けている","休業している","もともと個人事業はしていない","わからない"]},
+{c:"c2",k:"kojin_when",t:"text",q:"廃業・休業された場合、それはいつ頃ですか。",
+ why:"税務署に廃業届を出した時期がわかれば、それを書きます。",ph:"例：2026年1月／2025年の秋ごろ"},
+{c:"c2",k:"shikaku",t:"textarea",q:"お持ちの資格と登録番号を教えてください。",
+ why:"申込書に書く欄があります。免許証の写しも添付します。建築士事務所の登録番号もお願いします。",
+ ph:"例：一級建築士 第〇〇号／東京都知事登録 第〇〇号（建築士事務所）／その他"},
+{c:"c2",k:"chizai",t:"choice",q:"特許・実用新案・商標などをお持ちですか。",
+ why:"公庫の様式に「知的財産権等」の欄があります。あれば書きます。",
+ o:["ある（次でお聞きします）","ない","申請中"]},
+{c:"c2",k:"chizai_d",t:"text",q:"「ある」「申請中」の場合、内容を教えてください。",why:"名称だけで結構です。",ph:"例：商標「〇〇」"},
+{c:"c2",k:"kanren",t:"textarea",q:"社長ご自身か奥さまが経営しておられる会社が、ほかにありますか。",
+ why:"公庫の様式6「関連企業」の欄です。あれば必ず書きます。無ければ「無し」で結構です。",
+ ph:"例：無し／〇〇株式会社（不動産、妻が代表）"},
+{c:"c2",k:"miyazaki",t:"choice",q:"共同創業者の方は、登記上の役員に入っていますか。",
+ why:"公庫の団体信用生命保険に入れない場合、万一のとき会社に返済が残ります。「代表が抜けても事業が続く形」を示せるかどうかが、審査で一番効きます。",
+ o:["取締役として登記されている","登記はしていないが実質の共同経営者","社員として在籍","関わっていない","わからない"]},
+{c:"c2",k:"miyazaki_d",t:"textarea",q:"共同創業者の方のお歳と、これまでのご経歴を教えてください。",
+ why:"後を継げる方の経歴は、社長の経歴と同じくらい見られます。",ph:"例：〇歳、二級建築士、施工管理を〇年"},
+{c:"c2",k:"keizoku",t:"textarea",q:"社長にもしものことがあった場合、この事業は誰がどう続けますか。",
+ why:"答えにくい質問で申し訳ありません。ただ、面談では必ず聞かれます。先に用意しておけば、その場で強い材料になります。",
+ ph:"例：共同創業者が代表を引き継ぎ、設計は〇〇に外注、監理は〇〇が担当する"},
+{c:"c2",k:"kadou",t:"choice",q:"社長は、いま週に何日ぐらい現場・事務所に出ておられますか。",
+ why:"「現役で動いている」ことが伝わると、年齢の心配は大きく減ります。",
+ o:["ほぼ毎日","週4〜5日","週2〜3日","週1日以下","打ち合わせのときだけ"]},
+
+/* ===== 3. 仕事の中身 ===== */
+{c:"c3",k:"service",t:"textarea",q:"主なお仕事を3つ挙げて、それぞれ売上の何割ぐらいかを教えてください。",
+ why:"公庫の様式は「取扱商品・サービス」を3つまで、売上シェア（％）つきで書く形です。",
+ ph:"例：①耐震診断・改修 50％ ②リフォーム設計監理 30％ ③新築・建替の設計監理 20％"},
+{c:"c3",k:"tanka",t:"textarea",q:"1件あたりの受注金額は、それぞれいくらぐらいですか。",
+ why:"公庫の様式に「受注（販売）単価」の欄があります。内訳（設計だけの場合と工事込みの場合）を分けて伺いたいのです。",
+ ph:"例：耐震診断〇万円／リフォーム設計監理〇〇万円／工事込みなら〇〇〇万円"},
+{c:"c3",k:"strong",t:"textarea",q:"御社の強みを3つ挙げてください。",
+ why:"公庫の様式では「セールスポイント」として書きます。",
+ ph:"例：①代表の経験と実績　②公的な立場での信頼　③営業の姿勢"},
+{c:"c3",k:"target",t:"textarea",q:"どういうお客様を狙いますか。年齢層や住まいの築年数など。",
+ why:"公庫の様式の「販売ターゲット・販売戦略」に書きます。ポスティングの配布先の考え方とも合わせます。",
+ ph:"例：杉並区内の築30年以上の戸建てにお住まいの60代以上のご夫婦"},
+{c:"c3",k:"kyogo",t:"textarea",q:"同じ地域で競合になるのは、どういう相手ですか。",
+ why:"公庫の様式に「競合・市場など企業を取り巻く状況」の欄があります。",
+ ph:"例：大手リフォーム会社の営業、地元工務店、ハウスメーカーのリフォーム部門"},
+{c:"c3",k:"capacity",t:"text",q:"いまの体制で、年に何件ぐらいまで受けられますか。",
+ why:"受注が想定を上回ったときに回るか、というリスクの話です。ここが薄いと計画が絵に描いた餅に見えます。",
+ ph:"例：設計監理なら年10件ぐらいまで"},
+{c:"c3",k:"kyoryoku",t:"textarea",q:"工事をお願いする協力会社（工務店・職人）は決まっていますか。",
+ why:"公庫の様式5に「外注先」を書く欄があります。名前と付き合いの長さがわかると強いです。",
+ ph:"例：〇〇工務店（20年の付き合い）、水道は〇〇設備"},
+
+/* ===== 4. 人と取引先 ===== */
+{c:"c4",k:"shain",t:"textarea",q:"従業員の方の内訳を教えてください。",
+ why:"公庫の様式4は「3か月以上つづけて雇う予定の人数」を書きます。ご家族が含まれるかどうかも分けて書きます。",
+ ph:"例：常勤2名（うち家族1名）、パート1名"},
+{c:"c4",k:"koyou_hoken",t:"choice",q:"雇用保険に入っている方は何名いますか。",
+ why:"雇用を増やす計画があると、利率の引下げが0.65％から0.9％に広がる制度があります。",
+ o:["全員","2名","1名","0名","わからない"]},
+{c:"c4",k:"zouin",t:"textarea",q:"この先1〜2年で、人を増やす予定はありますか。",
+ why:"上の0.9％引下げに関わります。予定があるなら計画書に書きます。",ph:"例：受注が増えれば設計補助を1名／予定なし"},
+{c:"c4",k:"kyuyo",t:"text",q:"お給料は毎月何日にお支払いですか。月の人件費は合計いくらぐらいですか。",
+ why:"公庫の様式5に「人件費の支払」の欄があります。資金繰りの山を見るためです。",ph:"例：毎月25日、合計およそ〇〇万円"},
+{c:"c4",k:"kaishu",t:"textarea",q:"施主さまからの入金は、どういう区切りで頂いていますか。",
+ why:"公庫の様式5の「回収の条件」です。着手金があるかどうかで、必要な運転資金が変わります。",
+ ph:"例：契約時3割・中間3割・完成時4割／設計料は着手時に半金"},
+{c:"c4",k:"shiharai",t:"textarea",q:"外注先や仕入先への支払いは、どういう条件ですか。",
+ why:"公庫の様式5の「支払の条件」です。入金より支払が先だと、その差額が運転資金になります。",
+ ph:"例：月末締め翌月末払い／手形は使っていない"},
+{c:"c4",k:"tegata",t:"choice",q:"手形を使った取引はありますか。",
+ why:"様式に「うち手形割合」の欄があります。",o:["使っていない","一部ある","わからない"]},
+{c:"c4",k:"jimusho",t:"textarea",q:"事務所の家賃と、賃貸借契約の名義を教えてください。",
+ why:"申込のときに賃貸借契約書の写しを求められることがあります。名義が会社か個人かで扱いが変わります。",
+ ph:"例：月〇万円、契約名義は会社／社長個人"},
+{c:"c4",k:"teikyu",t:"text",q:"定休日はいつですか。",why:"公庫の様式に欄があります。",ph:"例：日曜・祝日"},
+
+/* ===== 5. お金のこと ===== */
+{c:"c5",k:"jiko_place",t:"choice",q:"自己資金は、いまどこにありますか。",
+ why:"面談では必ず「その自己資金はどこにあるか」を聞かれます。通帳で見せられる形が一番強いです。",
+ o:["会社名義の口座にある","社長個人の口座にある","一部は現金","これから入れる","わからない"]},
+{c:"c5",k:"jiko_from",t:"textarea",q:"その自己資金は、どうやって用意されたものですか。",
+ why:"公庫は自己資金の「出どころ」を見ます。長くかけて貯めたお金ほど評価されます。",
+ ph:"例：長年の貯蓄から／退職金の一部／個人事業の利益"},
+{c:"c5",k:"zandaka",t:"text",q:"いま会社の口座に、だいたいいくら残っていますか。",
+ why:"申込のときに通帳の写しを出します。だいたいで結構です。",ph:"例：およそ〇〇万円"},
+{c:"c5",k:"bank",t:"text",q:"会社のメインバンク（取引のある銀行・信用金庫）はどこですか。",
+ why:"事業計画書の「取引金融機関」が空欄のままです。融資金の振込先にもなります。",ph:"例：〇〇銀行 〇〇支店"},
+{c:"c5",k:"kariire_umu",t:"choice",q:"社長ご自身の名義で、いま返済中の借入はありますか。",
+ why:"公庫の様式7は、法人の申込でも代表者個人の借入を書かせます。住宅ローン・車・カードの分割も含みます。隠しても信用情報で必ず出ます。",
+ o:["ある（次で内訳をお聞きします）","ない","わからない"]},
+{c:"c5",k:"kariire_d",t:"textarea",q:"「ある」場合、借入先・使いみち・残高・年間の返済額を教えてください。",
+ why:"様式の欄がこの4つです。だいたいの数字で結構です。",
+ ph:"例：〇〇銀行／住宅／残高〇〇〇万円／年間〇〇万円\n〇〇カード／その他／残高〇万円／年間〇万円"},
+{c:"c5",k:"hosho",t:"choice",q:"どなたかの借入の保証人になっておられますか。",
+ why:"これも面談で聞かれます。",o:["なっていない","なっている","わからない"]},
+{c:"c5",k:"shinzoku",t:"textarea",q:"ご親族・ご友人から借りる予定のお金はありますか。",
+ why:"公庫の様式8に「親、兄弟、知人、友人等からの借入」の欄があり、返済方法まで書きます。",
+ ph:"例：予定なし／長男から〇〇万円（返済は利益が出てから）"},
+{c:"c5",k:"tako",t:"choice",q:"公庫のほかに、いま融資を申し込んでいる先はありますか。",
+ why:"銀行や信用保証協会に同時に出していると、公庫にもその情報が伝わります。先に言っておくほうが心証が良いです。",
+ o:["公庫だけ","銀行にも相談している","信用保証協会・自治体の制度融資も検討","わからない"]},
+{c:"c5",k:"kotei",t:"textarea",q:"毎月かならず出ていくお金を、項目ごとに教えてください。",
+ why:"公庫の様式9で、経費を人件費・家賃・その他に分けて書きます。返済がこの上に乗っても回るかを見ます。",
+ ph:"例：家賃〇万円／給与〇〇万円／通信・保険〇万円／その他〇万円"},
+
+/* ===== 6. これからの見通し ===== */
+{c:"c6",k:"jisseki",t:"choice",q:"設立から今日までに、売上または受注は発生していますか。",
+ why:"1円でもあれば計画書に書けます。無ければ「無い」と正直に書くほうが通ります。",
+ o:["ある（次で金額をお聞きします）","まだ無い","わからない"]},
+{c:"c6",k:"jisseki_d",t:"textarea",q:"「ある」場合、件数とおおよその金額を教えてください。",
+ why:"受注済みで入金待ちのものも含めてください。",ph:"例：設計監理2件、約180万円（うち入金済み80万円）"},
+{c:"c6",k:"mikomi",t:"textarea",q:"いま動いている案件・見込みのお客様はいますか。",
+ why:"「チラシを撒く前から相談がある」なら、それが一番の説得材料になります。",
+ ph:"例：耐震診断の相談が2件、うち1件は改修まで進みそう"},
+{c:"c6",k:"tousho",t:"textarea",q:"創業当初（これから数か月）の、月の売上見込みはいくらぐらいですか。",
+ why:"公庫の様式9は「創業当初」と「軌道に乗った後」の2列で、月平均の数字を書きます。",
+ ph:"例：月〇〇万円ぐらい"},
+{c:"c6",k:"kidou",t:"textarea",q:"軌道に乗った後は、月いくらぐらいを見ておられますか。またそれはいつ頃ですか。",
+ why:"同じく様式9の欄です。「いつ頃から」も書きます。",ph:"例：1年後に月〇〇〇万円ぐらい"},
+{c:"c6",k:"genka",t:"text",q:"売上のうち、外注費や材料費はだいたい何割ですか。",
+ why:"様式9の「売上原価（仕入高）」にあたります。設計だけの仕事と工事込みで違えば、分けて教えてください。",
+ ph:"例：設計のみなら1割、工事込みなら7割"},
+{c:"c6",k:"konkyo",t:"textarea",q:"その売上の見込みは、何を根拠に置いていますか。",
+ why:"公庫の様式に「計算された根拠をご記入ください」と明記されています。ここが空だと通りません。",
+ ph:"例：過去の個人事務所での年間受注件数／いまの相談件数／紹介の見込み"},
+{c:"c6",k:"posting_ex",t:"textarea",q:"これまでチラシや広告をされた経験はありますか。反響はどうでしたか。",
+ why:"今回の投資の大半がポスティングです。過去の実感があれば、反響率の置き方の裏づけになります。",
+ ph:"例：以前〇枚配って問い合わせが〇件／広告は初めて"},
+
+/* ===== 7. 書類と面談 ===== */
+{c:"c7",k:"touki",t:"choice",q:"会社の履歴事項全部証明書（登記簿謄本）は、お手元にありますか。",
+ why:"申込に必ず要ります。法務局か、オンラインでも取れます。発行から3か月以内のものが求められます。",
+ o:["ある","無い（取りに行く必要がある）","わからない"]},
+{c:"c7",k:"inkan",t:"choice",q:"会社の印鑑証明書はお手元にありますか。",
+ why:"契約のときに要ります。",o:["ある","無い","わからない"]},
+{c:"c7",k:"teikan",t:"choice",q:"定款の写しはすぐ出せますか。",
+ why:"設立時のものです。税務署への届出の控えと一緒に保管されていることが多いです。",
+ o:["出せる","探さないとわからない","無い"]},
+{c:"c7",k:"zeimu",t:"choice",q:"税務署への届出（法人設立届出書・青色申告の承認申請）は済んでいますか。",
+ why:"未提出だと、決算のときに不利になります。融資とは別に、済んでいるか確認しておきたいのです。",
+ o:["両方とも提出済み","法人設立届だけ提出","まだ","税理士に任せているのでわからない"]},
+{c:"c7",k:"zeirishi",t:"text",q:"顧問の税理士さんはおられますか。お名前か事務所名を教えてください。",
+ why:"決算や試算表を出してもらう場面が出てきます。",ph:"例：〇〇税理士事務所／いない"},
+{c:"c7",k:"honnin",t:"choice",q:"社長の本人確認書類は、どれをお持ちですか。",
+ why:"申込に要ります。運転免許証は両面、マイナンバーカードは表面のみを写します。",
+ o:["運転免許証","マイナンバーカード","パスポート","運転経歴証明書","どれも手元にない"]},
+{c:"c7",k:"net",t:"choice",q:"申込は、インターネットからと郵送・来店のどちらがよいですか。",
+ why:"インターネット申込なら24時間出せて、書類はPDFで送ります。こちらで代行して入力することもできます。",
+ o:["インターネット（こちらで入力してよい）","郵送か来店がよい","おまかせ"]},
+{c:"c7",k:"mendan",t:"textarea",q:"面談の希望を教えてください。来店かオンラインか、都合の良い曜日・時間帯、同席者。",
+ why:"公庫は新宿支店（西新宿1-14-9）です。オンラインでも受けられます。予約は来店なら前営業日14時まで、オンラインなら2営業日前16時までです。",
+ ph:"例：来店希望、平日の午後、共同創業者も同席"}
+];
+
+var state = load();
+var cur = null;   // 現在の章id
+var i = 0;        // 章内の位置
+
+function load(){
+  try{ var r = localStorage.getItem(KEY); return r ? JSON.parse(r) : {a:{}}; }
+  catch(e){ return {a:{}}; }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function $(id){ return document.getElementById(id); }
+function qs(cid){ return Q.filter(function(x){ return x.c === cid; }); }
+function answered(q){
+  var v = state.a[q.k];
+  if(q.t === "confirm"){ return (v && v !== "") || (state.a[q.k+"_note"] || "") !== ""; }
+  return v !== undefined && v !== null && String(v).trim() !== "";
+}
+
+/* ---------- 章メニュー ---------- */
+function menu(){
+  $("menu").style.display = "";
+  $("quiz").style.display = "none";
+  $("done").style.display = "none";
+  var box = $("chaps");
+  box.innerHTML = "";
+  CH.forEach(function(c){
+    var list = qs(c.id);
+    var n = list.filter(answered).length;
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chap";
+    var inner = document.createElement("span");
+    inner.innerHTML = "<b>" + c.name + "</b><small>" + c.desc + "　（全" + list.length + "問・" + c.src + "）</small>";
+    var pill = document.createElement("span");
+    pill.className = "pill " + (n === list.length ? "full" : (n === 0 ? "none" : ""));
+    pill.textContent = n === list.length ? "おわり" : (n === 0 ? "これから" : n + "/" + list.length);
+    b.appendChild(inner); b.appendChild(pill);
+    b.addEventListener("click", function(){ open(c.id); });
+    box.appendChild(b);
+  });
+  window.scrollTo(0,0);
+}
+
+function open(cid){
+  cur = cid;
+  var list = qs(cid);
+  i = 0;
+  for(var n = 0; n < list.length; n++){ if(!answered(list[n])){ i = n; break; } }
+  render();
+}
+
+/* ---------- 設問 ---------- */
+function render(){
+  var list = qs(cur);
+  if(i >= list.length){ menu(); return; }
+  $("menu").style.display = "none";
+  $("done").style.display = "none";
+  $("quiz").style.display = "";
+  var q = list[i];
+  var c = CH.filter(function(x){ return x.id === cur; })[0];
+  $("sec").textContent = c.name;
+  $("src").textContent = "（" + c.src + " にあたる項目です）";
+  $("q").textContent = q.q;
+  $("why").textContent = q.why;
+  $("bar").style.width = (i / list.length * 100) + "%";
+  $("count").textContent = (i + 1) + " / " + list.length + " 問目";
+  $("prev").style.visibility = i === 0 ? "hidden" : "visible";
+  $("next").textContent = (i === list.length - 1) ? "この章をおわる" : "次へ";
+
+  var f = $("field");
+  f.innerHTML = "";
+  var v = state.a[q.k] || "";
+
+  if(q.t === "confirm"){
+    var lab = document.createElement("p");
+    lab.className = "givenlab";
+    lab.textContent = "こちらで用意している内容";
+    var g = document.createElement("div");
+    g.className = "given"; g.textContent = q.given;
+    f.appendChild(lab); f.appendChild(g);
+    radios(f, q, ["この内容で合っています","直したいところがある"], v);
+    sub(f, q.k + "_note", "直すところ・足したいことがあれば、お書きください（無ければ空欄のまま）", "textarea", "");
+  } else if(q.t === "choice"){
+    radios(f, q, q.o, v);
+  } else {
+    var el = document.createElement(q.t === "textarea" ? "textarea" : "input");
+    if(q.t !== "textarea") el.type = "text";
+    el.value = v; el.placeholder = q.ph || "";
+    el.addEventListener("input", function(){ state.a[q.k] = el.value; save(); });
+    f.appendChild(el);
+    setTimeout(function(){ el.focus(); }, 30);
+  }
+  window.scrollTo(0,0);
+}
+
+function radios(f, q, opts, v){
+  opts.forEach(function(opt){
+    var lab = document.createElement("label");
+    lab.className = "opt" + (v === opt ? " sel" : "");
+    var inp = document.createElement("input");
+    inp.type = "radio"; inp.name = "o_" + q.k; inp.value = opt;
+    if(v === opt) inp.checked = true;
+    inp.addEventListener("change", function(){
+      Array.prototype.forEach.call(f.querySelectorAll("label.opt"), function(l){ l.className = "opt"; });
+      lab.className = "opt sel";
+      state.a[q.k] = opt; save();
+    });
+    lab.appendChild(inp);
+    lab.appendChild(document.createTextNode(opt));
+    f.appendChild(lab);
+  });
+}
+
+function sub(f, key, label, type, ph){
+  var l = document.createElement("p");
+  l.className = "sublab"; l.textContent = label;
+  var el = document.createElement(type === "textarea" ? "textarea" : "input");
+  if(type !== "textarea") el.type = "text";
+  el.value = state.a[key] || ""; el.placeholder = ph || "";
+  el.addEventListener("input", function(){ state.a[key] = el.value; save(); });
+  f.appendChild(l); f.appendChild(el);
+}
+
+function go(d){
+  i += d;
+  if(i < 0) i = 0;
+  save();
+  render();
+}
+
+$("next").addEventListener("click", function(){ go(1); });
+$("prev").addEventListener("click", function(){ go(-1); });
+$("skip").addEventListener("click", function(){
+  var q = qs(cur)[i];
+  if(state.a[q.k] === undefined) state.a[q.k] = "";
+  save(); go(1);
+});
+$("tomenu").addEventListener("click", menu);
+$("back").addEventListener("click", menu);
+$("toresult").addEventListener("click", finish);
+
+/* ---------- まとめ ---------- */
+function summary(){
+  var L = ["【日本政策金融公庫 聞き取りシート 回答】",""];
+  CH.forEach(function(c){
+    L.push("■ " + c.name + "（" + c.src + "）");
+    qs(c.id).forEach(function(q){
+      L.push("・" + q.q);
+      if(q.t === "confirm"){
+        var v = state.a[q.k], note = state.a[q.k+"_note"] || "";
+        L.push("  → " + (v ? v : "（未回答）"));
+        if(note.trim()) L.push("  ＞訂正・追記：" + note);
+      } else {
+        var a = state.a[q.k];
+        L.push("  → " + (a && String(a).trim() ? a : "（未回答）"));
+      }
+    });
+    L.push("");
+  });
+  L.push("記入日：" + new Date().toLocaleDateString("ja-JP"));
+  return L.join("\n");
+}
+
+function finish(){
+  $("menu").style.display = "none";
+  $("quiz").style.display = "none";
+  $("done").style.display = "";
+  var box = $("tbls");
+  box.innerHTML = "";
+  CH.forEach(function(c){
+    var h = document.createElement("h2");
+    h.className = "res"; h.textContent = c.name;
+    box.appendChild(h);
+    var t = document.createElement("table");
+    qs(c.id).forEach(function(q){
+      var tr = document.createElement("tr");
+      var th = document.createElement("th"); th.textContent = q.q;
+      var td = document.createElement("td");
+      var v = state.a[q.k];
+      var note = q.t === "confirm" ? (state.a[q.k+"_note"] || "") : "";
+      if((v && String(v).trim()) || note.trim()){
+        td.textContent = (v || "") + (note.trim() ? "／訂正：" + note : "");
+      } else { td.textContent = "未回答"; td.className = "empty"; }
+      tr.appendChild(th); tr.appendChild(td); t.appendChild(tr);
+    });
+    box.appendChild(t);
+  });
+  $("mail").href = "mailto:?subject=" +
+    encodeURIComponent("公庫の聞き取りシート 回答") +
+    "&body=" + encodeURIComponent(summary());
+  window.scrollTo(0,0);
+}
+
+$("copy").addEventListener("click", function(){
+  var txt = summary();
+  function ok(){ $("copied").style.display = "block"; }
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); ok(); }
+    catch(e){ alert("コピーできませんでした。画面の文字を選んでコピーしてください。"); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok, fallback);
+  } else { fallback(); }
+});
+
+$("reset").addEventListener("click", function(){
+  if(confirm("入力した内容をすべて消して、最初からやり直しますか。")){
+    state = {a:{}}; save(); menu();
+  }
+});
+
+menu();
+</script>
+</body>
+</html>
