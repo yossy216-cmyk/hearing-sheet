@@ -649,7 +649,7 @@ $("reset").addEventListener("click", function(){
 
 /* 中継（Cloudflare Workers）のURL。デプロイして出たURLをここに書く。
    空のままなら、下の語で引き当てる方式だけが動く。 */
-var PROXY = "";
+var PROXY = "https://hearing-proxy.viral-atlas-yossy.workers.dev";
 
 function pf(){ try{ return localStorage.getItem("yamamiya_pf") || ""; }catch(e){ return ""; } }
 function setPf(v){ try{ localStorage.setItem("yamamiya_pf", v); }catch(e){} }
