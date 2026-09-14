@@ -52,6 +52,20 @@ details.faq{margin:0 0 18px;border:1px solid var(--line);border-radius:12px;back
   .faqbody{font-size:15px;line-height:1.85;margin-top:10px}
   .faqbody h4{font-size:15px;margin:14px 0 4px;color:var(--accent)}
   .faqbody p{margin:0 0 6px}
+.qabox{margin:0 0 20px}
+  .qabox label{display:block;font-size:16px;font-weight:700;margin-bottom:4px}
+  .qarow{display:flex;gap:10px}
+  .qarow input{flex:1;font-family:inherit;font-size:18px;padding:12px 14px;
+    border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .qarow input:focus{outline:none;border-color:var(--accent)}
+  button.qgo{font-family:inherit;font-size:17px;font-weight:700;padding:12px 22px;
+    border-radius:10px;border:2px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  #qaout{margin-top:12px}
+  .qacard{background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:4px 10px 10px 4px;padding:13px 16px;margin-bottom:10px}
+  .qacard h5{margin:0 0 4px;font-size:15px;color:var(--accent)}
+  .qacard p{margin:0;font-size:15.5px;line-height:1.85}
+  .qamiss{border-left-color:var(--warn);color:var(--warn)}
   .askbox{margin:0 0 20px}
   .askbox label{display:block;font-size:16px;font-weight:700;margin-bottom:4px}
   .askhint{font-size:14px;color:var(--sub);margin:0 0 8px}
@@ -103,6 +117,16 @@ details.faq{margin:0 0 18px;border:1px solid var(--line);border-radius:12px;back
     <summary>公庫について、いま分かっていること（2026年9月14日に公式ページで確認）</summary>
     <div class="faqbody" id="faq"></div>
   </details>
+
+  <div class="qabox">
+    <label for="qa">公庫のことを聞いてみる</label>
+    <p class="askhint">ひとことで結構です。確認できている範囲でしたら、その場でお答えします。</p>
+    <div class="qarow">
+      <input type="text" id="qa" placeholder="例：保証人はいるの？　利率は何％？">
+      <button class="qgo" id="qgo" type="button">聞く</button>
+    </div>
+    <div id="qaout"></div>
+  </div>
 
   <div class="askbox">
     <label for="ask">聞きたいこと・気になっていること</label>
@@ -372,6 +396,22 @@ var FACTS = [
 ["申込から入金までの日数","公庫のサイトに事業資金としての記載が見つかりませんでした。予約相談のときに直接確かめます。"]
 ];
 
+/* 聞かれた言葉に含まれる語で、上の事実から答えを引き当てる。
+   AIではないので、当たらなかったものは下の欄へ書き残してもらう。 */
+var KW = [
+[["利率","金利","何パーセント","何％","%","％","パーセント","高い","安い"],[4,6,5]],
+[["保証人","連帯","担保","保証"],[3]],
+[["団信","生命保険","保険","万一","亡く","もしも"],[7]],
+[["期間","何年","返済","据置","すえおき","待って","月々","毎月"],[2]],
+[["いくらまで","上限","限度","最大","いくら借り"],[1]],
+[["申込","申し込み","ネット","郵送","来店","手続"],[8]],
+[["相談","予約","電話","窓口","支店"],[9]],
+[["日数","どのくらいかかる","いつ","入金","振り込","時間がかかる"],[10]],
+[["年齢","歳","シニア","高齢","若い"],[5,7]],
+[["制度","どの制度","何の融資","種類"],[0]],
+[["自己資金","頭金","手持ち"],[3,0]]
+];
+
 var state = load();
 var cur = null;   // 現在の章id
 var i = 0;        // 章内の位置
@@ -601,6 +641,47 @@ $("reset").addEventListener("click", function(){
     state = {a:{}}; save(); menu();
   }
 });
+
+function answer(){
+  var q = $("qa").value.trim();
+  var out = $("qaout");
+  out.innerHTML = "";
+  if(!q) return;
+  var hit = {}, any = false;
+  KW.forEach(function(r){
+    for(var i=0;i<r[0].length;i++){
+      if(q.indexOf(r[0][i]) >= 0){
+        r[1].forEach(function(n){ hit[n] = true; });
+        any = true; break;
+      }
+    }
+  });
+  if(any){
+    Object.keys(hit).slice(0,3).forEach(function(n){
+      var f = FACTS[n];
+      var d = document.createElement("div"); d.className = "qacard";
+      var t = document.createElement("h5"); t.textContent = f[0];
+      var b = document.createElement("p"); b.textContent = f[1];
+      d.appendChild(t); d.appendChild(b); out.appendChild(d);
+    });
+    var note = document.createElement("div");
+    note.className = "qacard qamiss";
+    note.innerHTML = "<p>これで足りないときは、下の「聞きたいこと」の欄にお書きください。調べて折り返します。</p>";
+    out.appendChild(note);
+  } else {
+    var m = document.createElement("div");
+    m.className = "qacard qamiss";
+    m.innerHTML = "<p>そのご質問は、この画面では確かめられていません。下の「聞きたいこと」の欄に書き写しましたので、そのままお送りください。調べて折り返します。</p>";
+    out.appendChild(m);
+    var a = $("ask");
+    a.value = (a.value ? a.value + String.fromCharCode(10) : "") + q;
+    state.ask = a.value; save();
+  }
+  $("qa").value = "";
+}
+
+$("qgo").addEventListener("click", answer);
+$("qa").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); answer(); } });
 
 var askEl = $("ask");
 askEl.value = state.ask || "";
