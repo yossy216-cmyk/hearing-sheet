@@ -64,6 +64,7 @@ details.faq{margin:0 0 18px;border:1px solid var(--line);border-radius:12px;back
   .qacard{background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);
     border-radius:4px 10px 10px 4px;padding:13px 16px;margin-bottom:10px}
   .qacard h5{margin:0 0 4px;font-size:15px;color:var(--accent)}
+  #pfrow{margin-bottom:10px}
   .qacard p{margin:0;font-size:15.5px;line-height:1.85}
   .qamiss{border-left-color:var(--warn);color:var(--warn)}
   .askbox{margin:0 0 20px}
@@ -120,7 +121,11 @@ details.faq{margin:0 0 18px;border:1px solid var(--line);border-radius:12px;back
 
   <div class="qabox">
     <label for="qa">公庫のことを聞いてみる</label>
-    <p class="askhint">ひとことで結構です。確認できている範囲でしたら、その場でお答えします。</p>
+    <p class="askhint">合言葉を入れていただくと、こちらから確かめたいことも含めて、やりとりの形でお伺いします。合言葉が分からないときは、そのままご質問だけどうぞ。</p>
+    <div class="qarow" id="pfrow">
+      <input type="text" id="pf" placeholder="メールに書かれている合言葉">
+      <button class="qgo" id="pfgo" type="button">はじめる</button>
+    </div>
     <div class="qarow">
       <input type="text" id="qa" placeholder="例：保証人はいるの？　利率は何％？">
       <button class="qgo" id="qgo" type="button">聞く</button>
@@ -642,11 +647,69 @@ $("reset").addEventListener("click", function(){
   }
 });
 
+/* 中継（Cloudflare Workers）のURL。デプロイして出たURLをここに書く。
+   空のままなら、下の語で引き当てる方式だけが動く。 */
+var PROXY = "";
+
+function pf(){ try{ return localStorage.getItem("yamamiya_pf") || ""; }catch(e){ return ""; } }
+function setPf(v){ try{ localStorage.setItem("yamamiya_pf", v); }catch(e){} }
+
+function card(cls, title, body){
+  var d = document.createElement("div");
+  d.className = "qacard" + (cls ? " " + cls : "");
+  if(title){ var t = document.createElement("h5"); t.textContent = title; d.appendChild(t); }
+  var b = document.createElement("p"); b.textContent = body; d.appendChild(b);
+  $("qaout").appendChild(d);
+  return d;
+}
+
+function ask(q){
+  var wait = card("", "聞き手", "書き取っています…");
+  fetch(PROXY, {
+    method:"POST",
+    headers:{"content-type":"application/json"},
+    body: JSON.stringify({
+      passphrase: pf(),
+      userText: q,
+      answers: state.a,
+      history: (state.chat || []).slice(-12)
+    })
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+  .then(function(res){
+    wait.remove();
+    if(!res.ok){
+      card("qamiss", null, (res.j && res.j.message) || "うまくつながりませんでした。もう一度お試しください。");
+      if(res.j && res.j.error === "passphrase") $("pfrow").style.display = "";
+      return;
+    }
+    var j = res.j;
+    (j.updates || []).forEach(function(u){ state.a[u.key] = u.value; });
+    if(j.question && j.question.trim()){
+      var a = $("ask");
+      a.value = (a.value ? a.value + String.fromCharCode(10) : "") + j.question.trim();
+      state.ask = a.value;
+    }
+    card("", "聞き手", j.reply || "");
+    state.chat = (state.chat || []).concat([{r:"me",t:q},{r:"ai",t:j.reply || ""}]).slice(-40);
+    save(); paint();
+  })
+  .catch(function(){
+    wait.remove();
+    card("qamiss", null, "うまくつながりませんでした。時間をおいてもう一度お試しください。");
+  });
+}
+
 function answer(){
   var q = $("qa").value.trim();
   var out = $("qaout");
-  out.innerHTML = "";
+  if(!(PROXY && pf())) out.innerHTML = "";
   if(!q) return;
+  if(PROXY && pf()){
+    $("qa").value = "";
+    card("", "こちら", q);
+    ask(q);
+    return;
+  }
   var hit = {}, any = false;
   KW.forEach(function(r){
     for(var i=0;i<r[0].length;i++){
@@ -679,6 +742,16 @@ function answer(){
   }
   $("qa").value = "";
 }
+
+$("pfgo").addEventListener("click", function(){
+  var v = $("pf").value.trim();
+  if(!v) return;
+  setPf(v);
+  $("pfrow").style.display = "none";
+  $("qa").focus();
+});
+$("pf").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); $("pfgo").click(); } });
+if(pf()) { var _r = $("pfrow"); if(_r) _r.style.display = "none"; }
 
 $("qgo").addEventListener("click", answer);
 $("qa").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); answer(); } });
