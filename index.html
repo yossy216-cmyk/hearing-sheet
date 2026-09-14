@@ -47,6 +47,15 @@
   .ghost{background:#fff;color:var(--accent)}
   .skip{background:none;border:none;color:var(--sub);font-size:16px;font-weight:400;
     text-decoration:underline;padding:12px 0;cursor:pointer}
+details.faq{margin:0 0 18px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 16px}
+  details.faq summary{cursor:pointer;font-size:15.5px;font-weight:700;color:var(--accent)}
+  .faqbody{font-size:15px;line-height:1.85;margin-top:10px}
+  .faqbody h4{font-size:15px;margin:14px 0 4px;color:var(--accent)}
+  .faqbody p{margin:0 0 6px}
+  .askbox{margin:0 0 20px}
+  .askbox label{display:block;font-size:16px;font-weight:700;margin-bottom:4px}
+  .askhint{font-size:14px;color:var(--sub);margin:0 0 8px}
+  .askbox textarea{min-height:84px}
   .note{font-size:14px;color:var(--sub);margin-top:24px;border-top:1px solid var(--line);padding-top:14px}
   /* 章メニュー */
   .chap{display:flex;align-items:center;gap:12px;border:2px solid var(--line);
@@ -89,6 +98,18 @@
     わからない項目は「わからない／あとで調べる」で飛ばせます。<br><br>
     <b>入力した内容は、この端末の中だけに残ります。どこにも送信されません。</b>
   </p>
+
+  <details class="faq">
+    <summary>公庫について、いま分かっていること（2026年9月14日に公式ページで確認）</summary>
+    <div class="faqbody" id="faq"></div>
+  </details>
+
+  <div class="askbox">
+    <label for="ask">聞きたいこと・気になっていること</label>
+    <p class="askhint">下に書いておいていただければ、調べて折り返します。回答と一緒に送られます。</p>
+    <textarea id="ask" placeholder="例：結局うちの利率は何％になるのか／保証人は本当にいらないのか"></textarea>
+  </div>
+
   <div id="chaps"></div>
   <div class="actions">
     <button class="primary" id="toresult" type="button">回答をまとめて見る</button>
@@ -337,6 +358,20 @@ var Q = [
  ph:"例：来店希望、平日の午後、共同創業者も同席"}
 ];
 
+var FACTS = [
+["使う制度","新規開業・スタートアップ支援資金（日本政策金融公庫 国民生活事業）。対象は「新たに事業を始める方、または事業開始後おおむね7年以内の方」。"],
+["借りられる上限","7,200万円。"],
+["返済の期間","設備資金は20年以内、運転資金は原則10年以内。どちらも元金を待ってもらう据置期間を5年以内で置けます。"],
+["担保と保証人","事業を始めてから税務申告を2期終えていない間は、原則として無担保・無保証人で利用できます。"],
+["利率（令和8年9月1日現在・無担保・税務申告2期未満の年利）","基準利率 3.75〜5.35％／特別利率A 3.35〜4.95％／特別利率B 3.10〜4.70％／特別利率C 2.85〜4.45％。幅があるのは返済期間や使いみちで変わるためで、期間ごとの細かい数字は公表されていません。最終的な利率は審査と面談で決まります。"],
+["55歳以上の方","「女性、若者/シニア起業家支援関連」という枠があり、利率が特別利率Aになります。年齢の上限は書かれていません。"],
+["創業まもない方の上乗せ","税務申告を2期終えていない間は、上の利率からさらに0.65％下がります（雇用を増やす場合は0.9％）。"],
+["団体信用生命保険","入れるのは申込日現在で満15歳以上満68歳未満の方です。融資が実行された後から入ることはできません。加入できない場合は、事業を継ぐ体制を示すことが大切になります。"],
+["申込の方法","インターネットからでも、郵送・来店でもできます。インターネットは24時間365日受け付けています。"],
+["相談","事前予約制です。来店なら希望日の前営業日14時まで、オンラインなら2営業日前の16時まで。創業のことを電話で聞ける窓口は 0120-154-505（音声案内のあと「0」／平日9時〜19時）。"],
+["申込から入金までの日数","公庫のサイトに事業資金としての記載が見つかりませんでした。予約相談のときに直接確かめます。"]
+];
+
 var state = load();
 var cur = null;   // 現在の章id
 var i = 0;        // 章内の位置
@@ -355,10 +390,22 @@ function answered(q){
 }
 
 /* ---------- 章メニュー ---------- */
+function paintFacts(){
+  var f = $("faq");
+  if(!f || f.children.length) return;
+  FACTS.forEach(function(x){
+    var h4 = document.createElement("h4"); h4.textContent = x[0];
+    var p = document.createElement("p"); p.textContent = x[1];
+    f.appendChild(h4); f.appendChild(p);
+  });
+}
+
 function menu(){
   $("menu").style.display = "";
   $("quiz").style.display = "none";
   $("done").style.display = "none";
+  paintFacts();
+
   var box = $("chaps");
   box.innerHTML = "";
   CH.forEach(function(c){
@@ -494,6 +541,11 @@ function summary(){
     });
     L.push("");
   });
+  if(state.ask && state.ask.trim()){
+    L.push("■ 聞きたいこと・気になっていること");
+    L.push(state.ask.trim());
+    L.push("");
+  }
   L.push("記入日：" + new Date().toLocaleDateString("ja-JP"));
   return L.join("\n");
 }
@@ -549,6 +601,10 @@ $("reset").addEventListener("click", function(){
     state = {a:{}}; save(); menu();
   }
 });
+
+var askEl = $("ask");
+askEl.value = state.ask || "";
+askEl.addEventListener("input", function(){ state.ask = askEl.value; save(); });
 
 menu();
 </script>
