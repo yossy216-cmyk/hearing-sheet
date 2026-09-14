@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>公庫のご相談</title>
+<style>
+  :root{ --bg:#f4f5f2; --sheet:#fff; --ink:#232a2f; --sub:#5b6570;
+         --line:#d9dcd4; --ai:#2c4a6b; --usu:#e7edf3; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+    font-size:19px;line-height:1.9;-webkit-text-size-adjust:100%}
+  .wrap{max-width:640px;margin:0 auto;padding:22px 16px 40px}
+  h1{font-size:21px;margin:0 0 18px;letter-spacing:.03em}
+  .turn{margin:0 0 18px}
+  .who{font-size:13px;color:var(--sub);margin:0 0 3px}
+  .say{margin:0;white-space:pre-wrap;background:var(--sheet);
+    border:1px solid var(--line);border-left:3px solid var(--ai);
+    border-radius:4px 12px 12px 4px;padding:15px 17px}
+  .me .say{background:var(--usu);border-left-color:var(--line);
+    border-radius:12px 4px 4px 12px}
+  .me .who{text-align:right}
+  .me{margin-left:auto}
+  textarea{width:100%;font-family:inherit;font-size:19px;line-height:1.8;
+    padding:14px 16px;border:2px solid var(--line);border-radius:10px;
+    background:#fff;color:var(--ink);min-height:96px;resize:vertical}
+  input[type=text]{width:100%;font-family:inherit;font-size:19px;padding:14px 16px;
+    border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  textarea:focus,input:focus{outline:none;border-color:var(--ai)}
+  button{font-family:inherit;font-size:19px;font-weight:700;padding:14px 34px;
+    border-radius:10px;border:none;background:var(--ai);color:#fff;cursor:pointer;margin-top:12px}
+  button:disabled{opacity:.45}
+  .lead{color:var(--sub);font-size:16px;margin:0 0 14px}
+  .waiting{color:var(--sub)}
+  :focus-visible{outline:3px solid var(--ai);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>公庫のご相談</h1>
+
+  <div id="gate">
+    <p class="lead">メールに書かれている合言葉を入れてください。</p>
+    <input type="text" id="pf" placeholder="合言葉">
+    <button id="pfgo" type="button">はじめる</button>
+  </div>
+
+  <div id="main" style="display:none">
+    <div id="thread"></div>
+    <textarea id="inp" placeholder="ここにお書きください"></textarea>
+    <button id="go" type="button">送る</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+var PROXY = "https://hearing-proxy.viral-atlas-yossy.workers.dev";
+var HELLO = "山下社長、お世話になっております。\n\n先日いただいたご回答をもとに書類を作っております。いくつか確かめたいことがございますので、こちらからお伺いします。\n\nご質問があれば、いつでもお書きください。お答えします。\n\nまず一つ目です。決算月、つまり事業年度の終わりは何月でしょうか。顧問の堀内税理士さんにお聞きいただければ分かります。";
+
+var $ = function(id){ return document.getElementById(id); };
+var busy = false;
+
+function store(k, v){ try{ if(v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){ return null; } }
+
+/* 聞き取りシートで入れた回答があれば、それも一緒に渡す */
+function answers(){
+  try{
+    var d = JSON.parse(localStorage.getItem("yamamiya_kouko_hearing_v2") || "{}");
+    return (d && d.a) ? d.a : {};
+  }catch(e){ return {}; }
+}
+function hist(){
+  try{ return JSON.parse(localStorage.getItem("yamamiya_talk") || "[]"); }catch(e){ return []; }
+}
+function saveHist(h){ store("yamamiya_talk", JSON.stringify(h.slice(-40))); }
+
+function say(who, text){
+  var d = document.createElement("div");
+  d.className = "turn" + (who === "me" ? " me" : "");
+  var w = document.createElement("p");
+  w.className = "who"; w.textContent = who === "me" ? "山下社長" : "聞き手";
+  var p = document.createElement("p");
+  p.className = "say"; p.textContent = text;
+  d.appendChild(w); d.appendChild(p);
+  $("thread").appendChild(d);
+  d.scrollIntoView({behavior:"smooth", block:"end"});
+  return d;
+}
+
+function start(){
+  $("gate").style.display = "none";
+  $("main").style.display = "";
+  var h = hist();
+  if(h.length){ h.forEach(function(m){ say(m.r, m.t); }); }
+  else { say("ai", HELLO); saveHist([{r:"ai", t:HELLO}]); }
+  $("inp").focus();
+}
+
+function send(){
+  if(busy) return;
+  var t = $("inp").value.trim();
+  if(!t) return;
+  $("inp").value = "";
+  say("me", t);
+  var h = hist(); h.push({r:"me", t:t}); saveHist(h);
+
+  busy = true; $("go").disabled = true;
+  var wait = say("ai", "書き取っています…");
+  wait.querySelector(".say").className = "say waiting";
+
+  fetch(PROXY, {
+    method:"POST",
+    headers:{"content-type":"application/json"},
+    body: JSON.stringify({
+      passphrase: store("yamamiya_pf") || "",
+      userText: t,
+      answers: answers(),
+      history: hist().slice(-12)
+    })
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+  .then(function(res){
+    wait.remove();
+    var msg = res.ok ? (res.j.reply || "") :
+      ((res.j && res.j.message) || "うまくつながりませんでした。もう一度「送る」を押してみてください。");
+    say("ai", msg);
+    var h2 = hist(); h2.push({r:"ai", t:msg}); saveHist(h2);
+    if(!res.ok && res.j && res.j.error === "passphrase"){
+      store("yamamiya_pf", "");
+      $("gate").style.display = ""; $("main").style.display = "none";
+    }
+  })
+  .catch(function(){
+    wait.remove();
+    say("ai", "うまくつながりませんでした。少し時間をおいて、もう一度「送る」を押してください。");
+  })
+  .then(function(){ busy = false; $("go").disabled = false; $("inp").focus(); });
+}
+
+$("pfgo").addEventListener("click", function(){
+  var v = $("pf").value.trim();
+  if(!v) return;
+  store("yamamiya_pf", v);
+  start();
+});
+$("pf").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); $("pfgo").click(); } });
+$("go").addEventListener("click", send);
+$("inp").addEventListener("keydown", function(e){
+  if((e.ctrlKey || e.metaKey) && e.key === "Enter"){ e.preventDefault(); send(); }
+});
+
+if(store("yamamiya_pf")) start();
+</script>
+</body>
+</html>
