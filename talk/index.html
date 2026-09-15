@@ -32,6 +32,7 @@
     border-radius:10px;border:none;background:var(--ai);color:#fff;cursor:pointer;margin-top:12px}
   button:disabled{opacity:.45}
   .lead{color:var(--sub);font-size:16px;margin:0 0 14px}
+  .prog{font-size:15px;color:var(--ai);margin:-8px 0 16px;font-variant-numeric:tabular-nums}
   .waiting{color:var(--sub)}
   :focus-visible{outline:3px solid var(--ai);outline-offset:2px}
 </style>
@@ -39,6 +40,7 @@
 <body>
 <div class="wrap">
   <h1>公庫のご相談</h1>
+  <p class="prog" id="prog" hidden></p>
 
   <div id="gate">
     <p class="lead">メールに書かれている合言葉を入れてください。</p>
@@ -56,7 +58,17 @@
 <script>
 "use strict";
 var PROXY = "https://hearing-proxy.viral-atlas-yossy.workers.dev";
-var HELLO = "山下社長、お世話になっております。\n\n先日いただいたご回答をもとに書類を作っております。いくつか確かめたいことがございますので、こちらからお伺いします。\n\nご質問があれば、いつでもお書きください。お答えします。\n\nまず一つ目です。決算月、つまり事業年度の終わりは何月でしょうか。顧問の堀内税理士さんにお聞きいただければ分かります。";
+var HELLO = [
+  "山下社長、先日はありがとうございました。",
+  "",
+  "同じことを何度もお尋ねしてしまい、失礼いたしました。原因はこちらの作りにありまして、いただいたお答えが残らない状態になっておりました。直してあります。",
+  "",
+  "先日うかがった内容はすべて控えてあります。同じことは二度お聞きしません。",
+  "",
+  "残りは11点ほどです。公庫の担当者に突っ込まれそうなところを、金額や時期まで詰めておきたいのです。一つずつまいります。",
+  "",
+  "まず、ポスティングの枚数について、こちらからご提案がございます。少しお時間をいただけますでしょうか。"
+].join(String.fromCharCode(10));
 
 var $ = function(id){ return document.getElementById(id); };
 var busy = false;
@@ -116,11 +128,16 @@ function send(){
       passphrase: store("yamamiya_pf") || "",
       userText: t,
       answers: answers(),
-      history: hist().slice(-12)
+      history: hist().slice(-20)
     })
   }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
   .then(function(res){
     wait.remove();
+    if(res.ok && res.j.progress){
+      var pr = $("prog");
+      pr.textContent = "残り " + (res.j.progress.total - res.j.progress.done) + " 点";
+      pr.hidden = false;
+    }
     var msg = res.ok ? (res.j.reply || "") :
       ((res.j && res.j.message) || "うまくつながりませんでした。もう一度「送る」を押してみてください。");
     say("ai", msg);
